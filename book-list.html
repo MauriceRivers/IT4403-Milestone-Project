@@ -13,24 +13,23 @@
   <h1>Book Search Results</h1>
   <div id="book-list"></div>
 
-  <script>
-    $(document).ready(function() {
-      $.getJSON('google-books-search.json', function(data) {
-        let output = '';
-        data.items.forEach(function(item) {
-          const info = item.volumeInfo;
-          output += `
-            <div class="book">
-              <h2>${info.title}</h2>
-              <p><strong>Author(s):</strong> ${info.authors?.join(', ')}</p>
-              <img src="${info.imageLinks?.thumbnail}" />
-              <p><a href="${info.previewLink}" target="_blank">Preview</a></p>
-            </div>
-          `;
-        });
-        $('#book-list').html(output);
-      });
+  <script src="google-books-search.js"></script>
+<script>
+  $(document).ready(function () {
+    let output = '';
+    bookList.items.forEach(function (item) {
+      const info = item.volumeInfo;
+      output += `
+        <div class="book">
+          <h2>${info.title}</h2>
+          <p><strong>Author(s):</strong> ${info.authors?.join(', ')}</p>
+          <img src="${info.imageLinks?.thumbnail}" />
+          <p><a href="${info.previewLink}" target="_blank">Preview</a></p>
+        </div>
+      `;
     });
-  </script>
+    $('#book-list').html(output);
+  });
+</script>
 </body>
 </html>
