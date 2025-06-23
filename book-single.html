@@ -15,17 +15,19 @@
  <script src="google-books-book.js"></script>
 <script>
   $(document).ready(function () {
-    const volumeInfo = bookData.volumeInfo;
-    const content = `
-      <h2>${volumeInfo.title}</h2>
-      <p><strong>Author(s):</strong> ${volumeInfo.authors?.join(', ')}</p>
-      <p><strong>Publisher:</strong> ${volumeInfo.publisher}</p>
-      <p><strong>Published:</strong> ${volumeInfo.publishedDate}</p>
-      <p><strong>Description:</strong> ${volumeInfo.description}</p>
-      <img src="${volumeInfo.imageLinks?.thumbnail}" alt="Book cover" />
-      <p><a href="${volumeInfo.previewLink}" target="_blank">Preview Book</a></p>
-    `;
-    $('#book-container').html(content);
+    $.getJSON("https://www.googleapis.com/books/v1/volumes/Wfan6L9RGgYC", function (data) {
+      const volumeInfo = data.volumeInfo;
+      const content = `
+        <h2>${volumeInfo.title}</h2>
+        <p><strong>Author(s):</strong> ${volumeInfo.authors?.join(', ')}</p>
+        <p><strong>Publisher:</strong> ${volumeInfo.publisher}</p>
+        <p><strong>Published:</strong> ${volumeInfo.publishedDate}</p>
+        <p><strong>Description:</strong> ${volumeInfo.description}</p>
+        <img src="${volumeInfo.imageLinks?.thumbnail}" alt="Book cover" />
+        <p><a href="${volumeInfo.previewLink}" target="_blank">Preview Book</a></p>
+      `;
+      $('#book-container').html(content);
+    });
   });
 </script>
 </body>
