@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Book List</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body { font-family: Arial; margin: 20px; }
+    .book { border-bottom: 1px solid #ccc; margin-bottom: 15px; padding: 10px; }
+    img { max-width: 100px; }
+  </style>
+</head>
+<body>
+  <h1>Book Search Results</h1>
+  <div id="book-list"></div>
+
+  <script>
+    $(document).ready(function() {
+      $.getJSON('google-books-search.json', function(data) {
+        let output = '';
+        data.items.forEach(function(item) {
+          const info = item.volumeInfo;
+          output += `
+            <div class="book">
+              <h2>${info.title}</h2>
+              <p><strong>Author(s):</strong> ${info.authors?.join(', ')}</p>
+              <img src="${info.imageLinks?.thumbnail}" />
+              <p><a href="${info.previewLink}" target="_blank">Preview</a></p>
+            </div>
+          `;
+        });
+        $('#book-list').html(output);
+      });
+    });
+  </script>
+</body>
+</html>

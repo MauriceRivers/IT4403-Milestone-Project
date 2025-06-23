@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>OpenLibrary Bonus</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <h1>Bonus: OpenLibrary Data</h1>
+  <div id="openlibrary-container"></div>
+
+  <script>
+    $(document).ready(function() {
+      $.getJSON('https://openlibrary.org/api/books?bibkeys=ISBN:0201558025,LCCN:93005405&format=json&jscmd=data', function(data) {
+        let html = '';
+        $.each(data, function(key, book) {
+          html += `<h2>${book.title}</h2>
+                   <p><strong>Authors:</strong> ${book.authors?.map(a => a.name).join(', ')}</p>
+                   <p><strong>Publish Date:</strong> ${book.publish_date}</p>
+                   <img src="${book.cover?.medium}" alt="Book cover"/>`;
+        });
+        $('#openlibrary-container').html(html);
+      });
+    });
+  </script>
+</body>
+</html>
