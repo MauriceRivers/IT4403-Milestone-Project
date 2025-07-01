@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Bookshelf</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    header { margin-bottom: 20px; }
+    nav a { margin-right: 15px; text-decoration: none; font-weight: bold; }
+    .book { margin: 10px 0; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
+    .book img { height: 100px; }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="bookshelf.html">My Bookshelf</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>My Google Bookshelf</h1>
+    <div id="bookshelf"></div>
+  </main>
+
+  <script>
+    // Replace these with your actual values from your Google Books public shelf
+    const userId = 'YOUR_GOOGLE_USER_ID';
+    const shelfId = 'YOUR_SHELF_ID'; // typically '1001' for Favorites, etc.
+
+    const apiURL = `https://www.googleapis.com/books/v1/users/${userId}/bookshelves/${shelfId}/volumes`;
+
+    $.getJSON(apiURL, function (data) {
+      const books = data.items || [];
+
+      if (books.length === 0) {
+        $('#bookshelf').html('<p>No books found in your public shelf.</p>');
+        return;
+      }
+
+      books.forEach(book => {
+        const title = book.volumeInfo.title || 'No title';
+        const thumbnail = book.volumeInfo.imageLinks?.thumbnail || '';
+        const id = book.id;
+
+        $('#bookshelf').append(
+          `<div class="book">
+            <img src="${thumbnail}" alt="Book cover">
+            <a href="details.html?id=${id}">${title}</a>
+          </div>`
+        );
+      });
+    }).fail(function () {
+      $('#bookshelf').html('<p>Failed to load your bookshelf. Please check your userId and shelfId.</p>');
+    });
+  </script>
+</body>
+</html>

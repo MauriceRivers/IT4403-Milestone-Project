@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Book Details</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    header { margin-bottom: 20px; }
+    nav a { margin-right: 15px; text-decoration: none; font-weight: bold; }
+    .details { margin-top: 20px; }
+    img { max-height: 200px; }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="bookshelf.html">My Bookshelf</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Book Details</h1>
+    <div class="details" id="bookDetails">Loading book details...</div>
+  </main>
+
+  <script>
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    $(document).ready(function () {
+      const bookId = getQueryParam('id');
+      if (!bookId) {
+        $('#bookDetails').text('No book ID provided.');
+        return;
+      }
+
+      const apiURL = `https://www.googleapis.com/books/v1/volumes/${bookId}`;
+
+      $.getJSON(apiURL, function (data) {
+        const info = data.volumeInfo;
+        const title = info.title || 'No title';
+        const authors = info.authors ? info.authors.join(', ') : 'Unknown author';
+        const publisher = info.publisher || 'Unknown publisher';
+        const description = info.description || 'No description';
+        const thumbnail = info.imageLinks?.thumbnail || '';
+        const previewLink = info.previewLink || '#';
+
+        $('#bookDetails').html(`
+          <h2>${title}</h2>
+          <p><strong>Author(s):</strong> ${authors}</p>
+          <p><strong>Publisher:</strong> ${publisher}</p>
+          <img src="${thumbnail}" alt="Book cover">
+          <p><strong>Description:</strong> ${description}</p>
+          <p><a href="${previewLink}" target="_blank">Preview on Google Books</a></p>
+        `);
+      }).fail(function () {
+        $('#bookDetails').text('Failed to load book details.');
+      });
+    });
+  </script>
+</body>
+</html>
