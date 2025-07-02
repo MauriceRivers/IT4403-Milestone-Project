@@ -26,11 +26,10 @@
   </main>
 
   <script>
-    // Replace these with your actual values from your Google Books public shelf
-    const userId = 'YOUR_GOOGLE_USER_ID';
-    const shelfId = 'YOUR_SHELF_ID'; // typically '1001' for Favorites, etc.
+    const userId = '104524434943805325616';
+    const shelfId = '1001';
 
-    const apiURL = `https://www.googleapis.com/books/v1/users/${userId}/bookshelves/${shelfId}/volumes`;
+    const apiURL = `https://www.googleapis.com/books/v1/users/${104524434943805325616}/bookshelves/${1001}/volumes`;
 
     $.getJSON(apiURL, function (data) {
       const books = data.items || [];
