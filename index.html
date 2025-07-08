@@ -1,82 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>IT 4403 Individual Project - Maurice Rivers</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Search App - Milestone 3</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <style>
-    body { font-family: Arial; margin: 20px; }
-    h1, h2 { color: navy; }
-    .book { margin: 10px 0; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
-    .book img { height: 100px; }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>IT 4403 Individual Project</h1>
-  <p><strong>Name:</strong> Maurice Rivers</p>
-  <p><strong>Course:</strong> IT 4403 Web Development</p>
-  <p><strong>Affiliation:</strong> Kennesaw State University</p>
-  <p><strong>Website:</strong> <a href="http://ccse.kennesaw.edu/it" target="_blank">CCSE IT Department</a></p>
+  <div id="app">
+    <h1>Google Books Search</h1>
 
-  <h2>Project Table of Contents</h2>
-  <ul>
-    <li><a href="book-single.html">Milestone 1 - Single Book JSON</a></li>
-    <li><a href="book-list.html">Milestone 1 - Book List JSON</a></li>
-    <li><a href="openlibrary.html">Milestone 1 - Bonus OpenLibrary JSON</a></li>
-  </ul>
+    <!-- Search Box -->
+    <input type="text" id="searchTerm" placeholder="Search for books...">
+    <button id="searchBtn">Search</button>
 
-  <hr>
-  <h2>Milestone 2 – Google Books Search</h2>
-  <input type="text" id="searchTerm" placeholder="Enter book title or keywords">
-  <button id="searchBtn">Search</button>
-  <div id="results"></div>
-  <div id="pagination"></div>
+    <!-- Results and Details Section -->
+    <div id="results"></div>
+    <div id="pagination"></div>
+    <div id="bookDetails"></div>
 
-  <script>
-    let books = [];
-    let resultsPerPage = 10;
+    <hr>
 
-    function displayResults(page = 1) {
-      const start = (page - 1) * resultsPerPage;
-      const end = start + resultsPerPage;
-      const displayBooks = books.slice(start, end);
+    <h2>My Public Bookshelf</h2>
+    <div id="bookshelf"></div>
+  </div>
 
-      $('#results').html('');
-      displayBooks.forEach(book => {
-        const title = book.volumeInfo.title || 'No title';
-        const thumbnail = book.volumeInfo.imageLinks?.thumbnail || '';
-        const id = book.id;
-        $('#results').append(
-          `<div class="book">
-            <img src="${thumbnail}" alt="Book cover">
-            <a href="details.html?id=${id}">${title}</a>
-          </div>`
-        );
-      });
-
-      const totalPages = Math.ceil(books.length / resultsPerPage);
-      let paginationHTML = '<label>Page: </label>';
-      for (let i = 1; i <= totalPages; i++) {
-        paginationHTML += `<input type="radio" name="page" value="${i}" ${i === page ? 'checked' : ''}>${i}`;
-      }
-      $('#pagination').html(paginationHTML);
-    }
-
-    $('#searchBtn').on('click', function () {
-      const term = $('#searchTerm').val();
-      if (!term) return;
-
-      const apiURL = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(term)}&maxResults=40`;
-
-      $.getJSON(apiURL, function (data) {
-        books = data.items || [];
-        displayResults(1);
-      });
-    });
-
-    $('#pagination').on('change', 'input[name="page"]', function () {
-      const selectedPage = parseInt($(this).val());
-      displayResults(selectedPage);
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
