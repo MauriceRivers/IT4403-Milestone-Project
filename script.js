@@ -3,6 +3,10 @@ const booksPerPage = 10;
 let currentBooks = [];
 
 $(document).ready(function () {
+  console.log("Script loaded!");
+});
+
+$(document).ready(function () {
   $("#searchBtn").on("click", function () {
     const term = $("#searchTerm").val().trim();
     if (term !== "") {
