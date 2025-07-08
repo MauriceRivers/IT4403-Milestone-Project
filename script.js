@@ -87,7 +87,7 @@ function showBookDetails(book) {
 }
 
 function loadBookshelf() {
-  const shelfID = "1002";
+  const shelfID = "1000";
   const userID = "104524434943805325616";
 
   const url = `https://www.googleapis.com/books/v1/users/${userID}/bookshelves/${shelfID}/volumes`;
