@@ -1,117 +1,57 @@
-const maxResults = 50;
-const booksPerPage = 10;
-let currentBooks = [];
+document.addEventListener("DOMContentLoaded", function () {
+  const searchBtn = document.getElementById("searchBtn");
+  const searchInput = document.getElementById("searchInput");
+  const resultsDiv = document.getElementById("results");
 
-$(document).ready(function () {
-  console.log("Script loaded!");
+  searchBtn.addEventListener("click", function () {
+    const query = searchInput.value.trim();
 
-  $("#searchBtn").on("click", function () {
-    const term = $("#searchTerm").val().trim();
-    if (term !== "") {
-      searchBooks(term);
+    if (query === "") {
+      resultsDiv.innerHTML = "<p>Please enter a search term.</p>";
+      return;
     }
-  });
 
-  $("#searchTerm").on("keypress", function (e) {
-    if (e.which === 13) {
-      $("#searchBtn").click();
-    }
-  });
+    // Clear previous results
+    resultsDiv.innerHTML = "<p>Searching...</p>";
 
-  loadBookshelf();
-});
+    // Fetch data from Google Books API
+    fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}`)
+      .then((response) => response.json())
+      .then((data) => {
+        resultsDiv.innerHTML = "";
 
-function searchBooks(query) {
-  const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(query)}&maxResults=${maxResults}`;
+        if (!data.items || data.items.length === 0) {
+          resultsDiv.innerHTML = "<p>No results found.</p>";
+          return;
+        }
 
-  $.getJSON(url, function (data) {
-    currentBooks = data.items || [];
-    showPage(1);
-    renderPagination(currentBooks.length);
-  });
-}
+        // Loop through books
+        data.items.forEach((book) => {
+          const bookInfo = book.volumeInfo;
+          const bookDiv = document.createElement("div");
+          bookDiv.className = "book";
 
-function showPage(pageNum) {
-  const start = (pageNum - 1) * booksPerPage;
-  const end = start + booksPerPage;
-  const pageBooks = currentBooks.slice(start, end);
+         bookDiv.innerHTML = `
+  <h3>${bookInfo.title || "No Title"}</h3>
+  <p><strong>Author(s):</strong> ${bookInfo.authors ? bookInfo.authors.join(", ") : "N/A"}</p>
+  <p><strong>Publisher:</strong> ${bookInfo.publisher || "N/A"}</p>
+  <p><strong>Published Date:</strong> ${bookInfo.publishedDate || "N/A"}</p>
+  <p>${bookInfo.description ? bookInfo.description.substring(0, 200) + "..." : "No description available."}</p>
+  <p>
+    ${bookInfo.previewLink ? `<a href="${bookInfo.previewLink}" target="_blank">Preview Book</a>` : ""}
+    | <a href="details.html?volumeId=${book.id}">View Details</a>
+  </p>
+  <hr>
+`;
 
-  $("#results").empty();
-  pageBooks.forEach(book => {
-    const title = book.volumeInfo.title || "No Title";
-    const img = book.volumeInfo.imageLinks?.thumbnail || "";
 
-    const bookDiv = $(`
-      <div class="book" data-id="${book.id}">
-        <img src="${img}" alt="${title}">
-        <p>${title}</p>
-      </div>
-    `);
 
-    bookDiv.on("click", function () {
-      showBookDetails(book);
-    });
-
-    $("#results").append(bookDiv);
-  });
-
-  $(".page-link").removeClass("active-page");
-  $(`.page-link[data-page='${pageNum}']`).addClass("active-page");
-}
-
-function renderPagination(totalBooks) {
-  const totalPages = Math.ceil(totalBooks / booksPerPage);
-  $("#pagination").empty();
-
-  for (let i = 1; i <= totalPages; i++) {
-    const btn = $(`<span class="page-link" data-page="${i}">${i}</span>`);
-    btn.on("click", function () {
-      showPage(i);
-    });
-    $("#pagination").append(btn);
-  }
-}
-
-function showBookDetails(book) {
-  const info = book.volumeInfo;
-  const title = info.title || "No Title";
-  const authors = info.authors ? info.authors.join(", ") : "Unknown Author";
-  const description = info.description || "No description available.";
-  const img = info.imageLinks?.thumbnail || "";
-
-  $("#bookDetails").html(`
-    <h3>${title}</h3>
-    <p><strong>Authors:</strong> ${authors}</p>
-    <img src="${img}" alt="${title}">
-    <p>${description}</p>
-  `);
-}
-
-function loadBookshelf() {
-  const shelfID = "1001";
-  const userID = "104524434943805325616";
-  const url = `https://www.googleapis.com/books/v1/users/${userID}/bookshelves/${shelfID}/volumes`;
-
-  $.getJSON(url, function (data) {
-    const books = data.items || [];
-
-    $("#bookshelf").empty();
-    books.forEach(book => {
-      const title = book.volumeInfo.title || "No Title";
-      const img = book.volumeInfo.imageLinks?.thumbnail || "";
-
-      const bookDiv = $(`
-        <div class="book">
-          <img src="${img}" alt="${title}">
-          <p>${title}</p>
-        </div>
-      `);
-
-      bookDiv.on("click", function () {
-        showBookDetails(book);
+          resultsDiv.appendChild(bookDiv);
+        });
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+        resultsDiv.innerHTML = "<p>Error fetching results. Please try again later.</p>";
       });
-
-      $("#bookshelf").append(bookDiv);
-    });
   });
-}
+});
