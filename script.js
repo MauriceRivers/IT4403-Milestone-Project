@@ -2,7 +2,6 @@ const maxResults = 50;
 const booksPerPage = 10;
 let currentBooks = [];
 
-
 $(document).ready(function () {
   console.log("Script loaded!");
 
@@ -13,14 +12,13 @@ $(document).ready(function () {
     }
   });
 
-  // Trigger search on Enter key
   $("#searchTerm").on("keypress", function (e) {
     if (e.which === 13) {
       $("#searchBtn").click();
     }
   });
 
-  loadBookshelf(); // Load your public bookshelf on page load
+  loadBookshelf();
 });
 
 function searchBooks(query) {
@@ -92,7 +90,6 @@ function showBookDetails(book) {
 function loadBookshelf() {
   const shelfID = "1001";
   const userID = "104524434943805325616";
-
   const url = `https://www.googleapis.com/books/v1/users/${userID}/bookshelves/${shelfID}/volumes`;
 
   $.getJSON(url, function (data) {
